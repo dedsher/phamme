@@ -1,0 +1,24 @@
+.chat-header {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 11px 24px 8px 24px;
+
+  background-color: $color-concrete;
+  border-radius: 0 12px 0 0;
+  box-shadow: 0 5px 4px -0 rgba($color-default-black, 0.2);
+
+  gap: 5px;
+
+  &__name {
+    font-size: 16px;
+  }
+
+  &__status {
+    font-size: 14px;
+    color: $color-gray;
+  }
+}

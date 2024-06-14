@@ -1,0 +1,44 @@
+[
+    {
+        "message_id": 2,
+        "type": "file",
+        "url": "https://example.com/file2.pdf"
+    },
+    {
+        "message_id": 5,
+        "type": "file",
+        "url": "https://example.com/file5.pdf"
+    },
+    {
+        "message_id": 9,
+        "type": "file",
+        "url": "https://example.com/file9.pdf"
+    },
+    {
+        "message_id": 14,
+        "type": "file",
+        "url": "https://example.com/file14.pdf"
+    },
+    {
+        "message_id": 15,
+        "type": "file",
+        "url": "https://example.com/file15.pdf"
+    },
+    {
+        "message_id": 17,
+        "type": "image",
+        "url": "https://example.com/image17.jpg",
+        "width": 1519,
+        "height": 1908
+    },
+    {
+        "message_id": 18,
+        "type": "file",
+        "url": "https://example.com/file18.pdf"
+    },
+    {
+        "message_id": 19,
+        "type": "file",
+        "url": "https://example.com/file19.pdf"
+    }
+]

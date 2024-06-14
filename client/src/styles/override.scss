@@ -1,0 +1,15 @@
+@import "./variables.scss";
+
+:root {
+  --ant-border-color-base: #{$color-alto};
+  --ant-box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --ant-disabled-color: #{$color-alto};
+  --ant-error-color: #{$color-gray};
+  --ant-heading-color: #{$color-default-black};
+  --ant-link-color: #{$color-light-purple};
+  --ant-primary-color: #{$color-bush};
+  --ant-success-color: #{$color-spring};
+  --ant-text-color: #{$color-cod-gray};
+  --ant-text-color-secondary: #{$color-gray};
+  --ant-warning-color: #{$color-nobel};
+}
