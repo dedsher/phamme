@@ -1,0 +1,21 @@
+.chat-layout {
+  position: relative;
+
+  display: grid;
+  height: 100%;
+
+  gap: 2px;
+  grid-template-columns: 312px 1fr;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 312px;
+
+    width: 2px;
+    height: 100%;
+
+    background-color: $color-concrete;
+  }
+}
