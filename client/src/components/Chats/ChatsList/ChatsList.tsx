@@ -12,9 +12,9 @@ const chats = [
   },
   {
     id: 2,
-    name: "Викусик Кукусик",
+    name: "Оксана Шамова",
     img: "https://via.placeholder.com/40",
-    text: "ыааааааааааааа",
+    text: "привет!",
     time: "22:50",
   },
   {

@@ -46,7 +46,7 @@ const FormItem = ({
             prefix={<CurrentIcon className="site-form-item-icon" />}
             placeholder={NAMES[name]["placeholder"]}
             status={error && touched ? "error" : ""}
-            type={name === "password" ? "password" : "text"}
+            type={["password", "passwordRepeat"].includes(name) ? "password" : "text"}
           />
         )}
       </Field>

@@ -17,16 +17,27 @@ const RegisterForm: React.FC = () => {
   const formikRef = React.useRef<any>(null);
   const initialValues: RegisterFormValues = {
     username: "",
-    password: "",
     email: "",
+    password: "",
     passwordRepeat: "",
   };
 
   const validationSchema = Yup.object().shape({
-    username: Yup.string().required("Введите имя"),
-    email: Yup.string().required("Введите email"),
-    password: Yup.string().required("Введите пароль"),
-    passwordRepeat: Yup.string().required("Повторите пароль"),
+    username: Yup.string()
+      .matches(/^[a-zA-Zа-яА-Я]+$/, "Имя пользователя должно содержать только буквы")
+      .min(4, "Имя пользователя должно быть не менее 4 символов")
+      .max(32, "Имя пользователя должно быть не более 32 символов")
+      .required("Введите имя"),
+    email: Yup.string()
+      .email('Некорректная почта')
+      .required('Введите почту'),
+    password: Yup.string()
+      .min(8, "Пароль должен быть не менее 8 символов")
+      .max(32, "Пароль должен быть не более 32 символов")
+      .required("Введите пароль"),
+    passwordRepeat: Yup.string()
+      .oneOf([Yup.ref('password')], 'Пароли должны совпадать')
+      .required("Повторите пароль"),
   });
 
   const handleSubmit = (values: RegisterFormValues) => {

@@ -16,6 +16,10 @@ import ChatEmpty from "@components/Chat/ChatEmpty/ChatEmpty";
 
 const router = createBrowserRouter([
   {
+    path: "/",
+    element: <Navigate to="auth" />,
+  },
+  {
     path: "/auth",
     element: <Outlet />,
     errorElement: <ErrorPage />,
