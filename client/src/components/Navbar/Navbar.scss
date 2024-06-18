@@ -1,0 +1,20 @@
+.navbar {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 5px;
+
+  background-color: $color-default-white;
+  border-radius: 12px;
+
+  gap: 10px;
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%;
+
+    gap: 20px;
+  }
+}
