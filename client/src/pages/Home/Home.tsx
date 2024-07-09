@@ -1,7 +1,8 @@
 import Navbar from "@components/Navbar/Navbar";
 import MainLayout from "@components/MainLayout/MainLayout";
-import "./Home.scss";
 import { Outlet } from "react-router-dom";
+import "@sockets/socket";
+import "./Home.scss";
 
 const Home = () => {
   return (

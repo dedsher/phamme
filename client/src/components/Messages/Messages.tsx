@@ -1,32 +1,31 @@
 import MessageGroup from "@components/MessageGroup/MessageGroup";
-
-import "./Messages.scss";
 import Message from "@components/Message/Message";
+import { IMessage } from "@interfaces/entities";
+import "./Messages.scss";
+import { useEffect, useRef } from "react";
 
-export type Attachment = {
-  message_id: number,
-  type: string,
-  url: string,
-};
+const Messages = ({
+  messages,
+  onReply,
+}: {
+  messages: IMessage[];
+  onReply: (messageId: number, content: string) => void;
+}) => {
+  const messagesRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    messagesRef.current?.scrollTo({
+      top: messagesRef.current?.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages]);
 
-export type Message = {
-  id: number,
-  chat_id: number,
-  sender_id: number,
-  content: string,
-  timestamp: string,
-  status: string,
-  reply_to?: number,
-};
-
-const Messages = ({messages}) => {
   return (
     <div className="messages">
-      <div className="messages__wrapper">
+      <div className="messages__wrapper" ref={messagesRef}>
         {messages.map((message) => (
           // <MessageGroup img={messageGroup.img} messages={messageGroup.messages} isAuthor={messageGroup.isAuthor} />
-          <Message key={message.id} text={message.content} time={message.timestamp} isAuthor={message.sender_id === 1} replyTo={message.reply_to} />
+          <Message key={message.id} message={message} onReply={onReply} />
         ))}
       </div>
     </div>

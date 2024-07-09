@@ -1,54 +1,52 @@
 import ChatsItem from "@components/Chats/ChatsItem/ChatsItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-const chats = [
-  {
-    id: 1,
-    name: "Марк Автосервис",
-    img: "https://via.placeholder.com/40",
-    text: "хахахахахахахахахахахахаха",
-    time: "22:50",
-  },
-  {
-    id: 2,
-    name: "Оксана Шамова",
-    img: "https://via.placeholder.com/40",
-    text: "привет!",
-    time: "22:50",
-  },
-  {
-    id: 3,
-    name: "Ваня Петрович",
-    img: "https://via.placeholder.com/40",
-    text: "хахахахахахахахахахахахаха",
-    time: "22:50",
-  },
-];
+import { useUserId } from "@hooks/useUserId";
+import { useDispatch } from "@hooks/useRedux";
+import { Empty, Spin } from "antd";
+import "./ChatsList.scss";
+import ReloadButton from "@components/ReloadButton/ReloadButton";
+import { setCurrentFriendId } from "@store/features/friendSlice";
+import { useGetUserChatsQuery } from "@store/apiSlice";
 
 const ChatsList = () => {
-  const currentChatId = useParams<{ chatId: string }>().chatId;
+  const currentChatId = useParams<{ chatId: string }>().chatId || null;
+  const [activeChat, setActiveChat] = useState<number | null>(null);
   const navigate = useNavigate();
-  const [activeChat, setActiveChat] = useState(Number(currentChatId));
-  const handleChatClick = (id: number) => {
-    setActiveChat(id);
-    navigate(`${id}`);
-  }
+  const dispatch = useDispatch();
+  const userId = useUserId();
+
+  const { data: chats = [], isLoading } = useGetUserChatsQuery(userId);
+
+  const handleChatClick = (chatId: number, userId: number) => {
+    setActiveChat(chatId);
+    navigate(`${chatId}`);
+    dispatch(setCurrentFriendId(userId));
+  };
+
+  useEffect(() => {
+    setActiveChat(Number(currentChatId) || null);
+  }, [currentChatId]);
 
   return (
-    <div>
-      {chats.map((chat) => (
-        <ChatsItem
-          key={chat.id}
-          id={chat.id}
-          img={chat.img}
-          name={chat.name}
-          text={chat.text}
-          time={chat.time}
-          isActive={activeChat === chat.id}
-          handleClick={() => handleChatClick(chat.id)}
+    <div className="chats-list">
+      {isLoading && <Spin />}
+      {chats.length ? (
+        chats.map((chat: any) => (
+          <ChatsItem
+            key={chat.id}
+            chat={chat}
+            isActive={activeChat === chat.id}
+            handleClick={() => handleChatClick(chat.id, chat.friend_id)}
+          />
+        ))
+      ) : (
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={<ReloadButton />}
+          imageStyle={{ height: 60 }}
         />
-      ))}
+      )}
     </div>
   );
 };

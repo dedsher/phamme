@@ -1,0 +1,7 @@
+.chats-wrapper {
+  display: grid;
+  height: 100%;
+  overflow: hidden;
+
+  grid-template-rows: auto 1fr;
+}

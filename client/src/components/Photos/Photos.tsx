@@ -1,10 +1,11 @@
 import { Image } from "antd";
 import "./Photos.scss";
+import { IAttachment } from "@interfaces/entities";
 
 const Photos = ({
   attachments,
 }: {
-  attachments: { type: string; url: string; width: number; height: number }[];
+  attachments: IAttachment[];
 }) => {
   return (
     <Image.PreviewGroup

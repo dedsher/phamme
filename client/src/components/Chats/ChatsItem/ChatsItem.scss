@@ -25,7 +25,7 @@
     }
   }
 
-  &__content {
+  &__wrapper {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -53,6 +53,14 @@
     font-size: 12px;
   }
 
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 5px;
+  }
+
   &__text {
     max-width: 85%;
     margin: 0;
@@ -64,6 +72,22 @@
     text-overflow: ellipsis;
   }
 
+  &__unread {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+
+    font-weight: 400;
+    font-size: 12px;
+    color: $color-default-white;
+
+    background-color: $color-alt-purple;
+    border-radius: 50%;
+    ;
+  }
+
   &.active,
   &:hover {
     color: $color-default-white;
@@ -72,6 +96,6 @@
   }
 
   &:not(.active):hover {
-    opacity: 0.8;
+    opacity: 0.6;
   }
 }

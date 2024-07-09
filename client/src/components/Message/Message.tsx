@@ -2,38 +2,64 @@ import { useEffect, useRef, useState } from "react";
 import "./Message.scss";
 import classNames from "classnames";
 import Photos from "@components/Photos/Photos";
+import { parseTimeForMessage } from "@utils/helpers";
+import { IMessage } from "@interfaces/entities";
+import { useUserId } from "@hooks/useUserId";
+import { Button, Dropdown, MenuProps } from "antd";
+import {
+  MessageOutlined,
+  SignatureOutlined,
+  EllipsisOutlined,
+} from "@ant-design/icons";
 
-const formatTime = (datetimeString: string) => {
-  const date = new Date(datetimeString);
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  return `${hours}:${minutes}`;
-};
+const userId = useUserId();
+
+const items: MenuProps["items"] = [
+  { key: "reply", icon: <MessageOutlined />, label: "Ответить" },
+  { key: "edit", icon: <SignatureOutlined />, label: "Редактировать" },
+];
+
+const getMenuItems = (isAuthor: boolean) => {
+  if (isAuthor) {
+    return items;
+  }
+  return items.filter((item: any) => item.key !== "edit");
+}
 
 const Message = ({
-  text,
-  time,
-  isAuthor,
-  replyTo,
-  attachments,
+  message,
+  onReply,
 }: {
-  text: string;
-  time: string;
-  isAuthor: boolean;
-  replyTo?: string;
-  attachments?: { type: string; url: string; width: number; height: number }[];
+  message: IMessage;
+  onReply: (messageId: number, content: string) => void;
 }) => {
   const messageRef = useRef<HTMLDivElement>(null);
+  const replyRef = useRef<HTMLDivElement>(null);
   const [replyWidth, setReplyWidth] = useState<number | null>(null);
+  const { id, sender_id, content, created_at, attachments, reply_to } = message;
 
   useEffect(() => {
     if (messageRef.current) {
       setReplyWidth(messageRef.current.offsetWidth);
     }
-  }, [text, replyTo]);
+  }, [content, reply_to]);
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+    if (key === "edit") {
+      // message.info("Payment feature is not implemented yet.");
+      return;
+    } else if (key === "reply") {
+      onReply(id, content);
+    }
+  };
 
   return (
-    <div className={classNames("message", isAuthor ? "message--author" : "")}>
+    <div
+      className={classNames(
+        "message",
+        userId === sender_id ? "message--author" : ""
+      )}
+    >
       <div className="message__content">
         <div className="message__bubble">
           {attachments && (
@@ -41,21 +67,29 @@ const Message = ({
               <Photos attachments={attachments} />
             </div>
           )}
-          {replyTo && (
+          {reply_to && (
             <div
               className="message__reply"
               style={{ maxWidth: replyWidth ? `${replyWidth}px` : "auto" }}
             >
-              <div className="message__reply-text">{replyTo}</div>
+              <div className="message__reply-text">{reply_to}</div>
             </div>
           )}
           <div className="message__text-wrapper" ref={messageRef}>
-            <div className="message__text">
-              {text}
+            <div className="message__text">{content}</div>
+            <div className="message__time">
+              {parseTimeForMessage(created_at)}
             </div>
-            <div className="message__time">{formatTime(time)}</div>
           </div>
         </div>
+      </div>
+      <div className="message__reply-button">
+        <Dropdown
+          menu={{ items: getMenuItems(userId === sender_id), onClick: handleMenuClick }}
+          trigger={["click"]}
+        >
+          <Button className="chat-input__more" icon={<EllipsisOutlined />} />
+        </Dropdown>
       </div>
     </div>
   );

@@ -6,6 +6,14 @@
 
   gap: 5px;
 
+  &__reply-button {
+    display: none;
+  }
+
+  &:hover .message__reply-button {
+    display: block;
+  }
+
   &__attachments {
     margin-bottom: 12px;
   }
@@ -14,7 +22,6 @@
     position: relative;
 
     display: flex;
-    flex-direction: column;
     max-width: 100%;
   }
 

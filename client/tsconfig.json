@@ -18,11 +18,15 @@
     "paths": {
       "@assets/*": ["assets/*"],
       "@components/*": ["components/*"],
-      "@state/*": ["state/*"],
+      "@store/*": ["store/*"],
       "@pages/*": ["pages/*"],
       "@api/*": ["api/*"],
       "@styles/*": ["styles/*"],
       "@mocks/*": ["mocks/*"],
+      "@interfaces/*": ["interfaces/*"],
+      "@utils/*": ["utils/*"],
+      "@hooks/*": ["hooks/*"],
+      "@sockets/*": ["sockets/*"],
     },
 
     /* Linting */

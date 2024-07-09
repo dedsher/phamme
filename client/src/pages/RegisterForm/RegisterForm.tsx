@@ -1,48 +1,65 @@
 import React from "react";
 import Button from "@components/Button/Button";
-import "./RegisterForm.scss";
-import { Link } from "react-router-dom";
-import { Formik, Form, FormikProps } from "formik";
-import * as Yup from "yup";
 import FormItem from "@components/FormItem/FormItem";
+import "./RegisterForm.scss";
+import { Link, useNavigate } from "react-router-dom";
+import { Formik, Form, FormikHelpers, FormikProps } from "formik";
+import { registerUser } from "@api/api";
+import { RegisterData } from "@interfaces/entities";
+import { registerValidationSchema } from "@utils/validationSchemas";
 
 interface RegisterFormValues {
-  username: string;
+  firstname: string;
+  lastname: string;
   email: string;
   password: string;
   passwordRepeat: string;
 }
 
 const RegisterForm: React.FC = () => {
+  const navigate = useNavigate();
   const formikRef = React.useRef<any>(null);
+  const [errorResponse, setErrorResponse] = React.useState<string>("");
   const initialValues: RegisterFormValues = {
-    username: "",
+    firstname: "",
+    lastname: "",
     email: "",
     password: "",
     passwordRepeat: "",
   };
 
-  const validationSchema = Yup.object().shape({
-    username: Yup.string()
-      .matches(/^[a-zA-Zа-яА-Я]+$/, "Имя пользователя должно содержать только буквы")
-      .min(4, "Имя пользователя должно быть не менее 4 символов")
-      .max(32, "Имя пользователя должно быть не более 32 символов")
-      .required("Введите имя"),
-    email: Yup.string()
-      .email('Некорректная почта')
-      .required('Введите почту'),
-    password: Yup.string()
-      .min(8, "Пароль должен быть не менее 8 символов")
-      .max(32, "Пароль должен быть не более 32 символов")
-      .required("Введите пароль"),
-    passwordRepeat: Yup.string()
-      .oneOf([Yup.ref('password')], 'Пароли должны совпадать')
-      .required("Повторите пароль"),
-  });
+  const handleSubmit = async (
+    values: RegisterFormValues,
+    { setSubmitting, setStatus }: FormikHelpers<RegisterFormValues>
+  ) => {
+    setSubmitting(true);
 
-  const handleSubmit = (values: RegisterFormValues) => {
-    // Обработка данных формы
-    console.log(values);
+    const registerData: RegisterData = {
+      firstname: values.firstname,
+      lastname: values.lastname,
+      email: values.email,
+      password: values.password,
+    };
+
+    try {
+      const response = await registerUser(registerData);
+      if (response?.message === "Registered") {
+        setStatus({ success: true });
+        setTimeout(() => {
+          navigate("/auth/signin");
+        }, 2000);
+      } else {
+        setStatus({ success: false });
+        setErrorResponse("Ошибка регистрации");
+      }
+    } catch (error: any) {
+      setStatus({ success: false });
+      if (error.message === "User already exists") {
+        setErrorResponse("Пользователь с таким email уже существует");
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const onSubmitButtonClick = () => {
@@ -55,17 +72,29 @@ const RegisterForm: React.FC = () => {
       <p>Вы - скибиди туалет</p>
       <Formik
         initialValues={initialValues}
-        validationSchema={validationSchema}
+        validationSchema={registerValidationSchema}
         onSubmit={handleSubmit}
         innerRef={formikRef}
       >
-        {({ errors, touched }: FormikProps<RegisterFormValues>) => (
+        {({
+          errors,
+          touched,
+          isSubmitting,
+          status,
+        }: FormikProps<RegisterFormValues>) => (
           <Form className="login-form">
-            <FormItem
-              error={errors.username}
-              touched={touched.username}
-              name="username"
-            />
+            <div className="login-form__group">
+              <FormItem
+                error={errors.firstname}
+                touched={touched.firstname}
+                name="firstname"
+              />
+              <FormItem
+                error={errors.lastname}
+                touched={touched.lastname}
+                name="lastname"
+              />
+            </div>
             <FormItem
               error={errors.email}
               touched={touched.password}
@@ -81,7 +110,17 @@ const RegisterForm: React.FC = () => {
               touched={touched.passwordRepeat}
               name="passwordRepeat"
             />
-            <Button handleClick={onSubmitButtonClick}>
+            <div>
+              {status && status.success && (
+                <div className="login-form__success">
+                  Вы успешно зарегестрированы!
+                </div>
+              )}
+              {status && !status.success && (
+                <div className="login-form__error">{errorResponse}</div>
+              )}
+            </div>
+            <Button handleClick={onSubmitButtonClick} disabled={isSubmitting}>
               Зарегестрироваться
             </Button>
             <div className="login-form__addon">

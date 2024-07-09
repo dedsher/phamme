@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const navbarItems = [
   { icon: ChatIcon, label: "Чаты", path: "chats" },
-  { icon: FrensIcon, label: "Друзья", path: "friends" },
+  // { icon: FrensIcon, label: "Друзья", path: "friends" },
   { icon: TransesIcon, label: "Переводы", path: "transactions" },
   { icon: SettingsIcon, label: "Настройки" },
 ];

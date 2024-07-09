@@ -1,9 +1,22 @@
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
+import knex from "knex";
+import config from "../../knexfile";
 
-const adapter = new FileSync('db.json');
-const db = low(adapter);
+const environment = process.env.NODE_ENV || "development";
+const connectionConfig = config[environment];
 
-db.defaults({ users: [], chats: [], messages: [], transactions: [] }).write();
+const db = knex(connectionConfig);
+
+async function fixSequence() {
+  try {
+    await db.raw(`
+        SELECT setval('message_id_seq', (SELECT MAX(id) FROM message));
+      `);
+    console.log("Sequence fixed successfully.");
+  } catch (err) {
+    console.error("Error fixing sequence:", err);
+  }
+}
+
+fixSequence();
 
 export default db;

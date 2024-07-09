@@ -4,9 +4,17 @@ import { Field } from "formik";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
 const NAMES = {
-  username: {
-    placeholder: "Имя пользователя",
+  login: {
+    placeholder: "Имя пользователя или Email",
     icon: UserOutlined,
+  },
+  firstname: {
+    placeholder: "Имя",
+    icon: null,
+  },
+  lastname: {
+    placeholder: "Фамилия",
+    icon: null,
   },
   email: {
     placeholder: "Email",
@@ -31,7 +39,7 @@ const FormItem = ({
   touched?: boolean;
   name: keyof typeof NAMES;
 }) => {
-    const CurrentIcon = NAMES[name]["icon"];
+  const CurrentIcon = NAMES[name]["icon"];
   return (
     <div
       className={classNames(
@@ -40,16 +48,29 @@ const FormItem = ({
       )}
     >
       <Field name={name}>
-        {({ field }: { field: any }) => (
-          <Input
-            {...field}
-            prefix={<CurrentIcon className="site-form-item-icon" />}
-            placeholder={NAMES[name]["placeholder"]}
-            status={error && touched ? "error" : ""}
-            type={["password", "passwordRepeat"].includes(name) ? "password" : "text"}
-          />
-        )}
+        {({ field }: { field: any }) =>
+          ["password", "passwordRepeat"].includes(name) ? (
+            <Input.Password
+              {...field}
+              prefix={
+                CurrentIcon && <CurrentIcon className="site-form-item-icon" />
+              }
+              placeholder={NAMES[name]["placeholder"]}
+              status={error && touched ? "error" : ""}
+            />
+          ) : (
+            <Input
+              {...field}
+              prefix={
+                CurrentIcon && <CurrentIcon className="site-form-item-icon" />
+              }
+              placeholder={NAMES[name]["placeholder"]}
+              status={error && touched ? "error" : ""}
+            />
+          )
+        }
       </Field>
+
       {error && touched ? <div className="error">{error}</div> : null}
     </div>
   );
