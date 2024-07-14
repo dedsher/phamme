@@ -1,3 +1,5 @@
+import { IAttachment, IMessage } from "@interfaces/entities";
+
 const days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
 export const parseTimeForChat = (time: string) => {
@@ -33,4 +35,21 @@ export const parseTimeForMessage = (datetimeString: string) => {
 
 export const handleReloadClick = () => {
   window.location.reload();
+};
+
+export const mergeMessages = (
+  messages: IMessage[],
+  attachments: IAttachment[]
+) => {
+  const mergedMessages = messages.map((message) => ({ ...message }));
+
+  mergedMessages.forEach((message) => {
+    const foundAttachments = attachments.filter(
+      (attachment) => message.id === attachment.message_id
+    );
+
+    message.attachments = foundAttachments.length > 0 ? foundAttachments : undefined;
+  });
+
+  return mergedMessages;
 };

@@ -14,5 +14,5 @@ const s3 = new EasyYandexS3({
 
 export const uploadFile = async (file: any) => {
   const response = await s3.Upload({ buffer: file.buffer }, "/files/");
-  return response.Location;
+  return { type: file.mimetype, url: response.Location, fileName: file.originalname };
 };

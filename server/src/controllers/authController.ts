@@ -3,8 +3,8 @@ import { IUserService } from "../types/core";
 import { inject } from "inversify";
 import { TYPES } from "../types/inversify";
 import { Request, Response, NextFunction } from "express";
-import { ERROR_MESSAGE } from "constants/errorMessage";
-import { RESPONSE_STATUS } from "constants/responseStatus";
+import { ERROR_MESSAGE } from "../constants/errorMessage";
+import { RESPONSE_STATUS } from "../constants/responseStatus";
 
 const { AUTH: AUTH_ERROR } = ERROR_MESSAGE;
 
@@ -16,11 +16,18 @@ export default class AuthController {
   async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { login, password } = req.body;
-      const token = await this.userService.login(login, password);
+      const { accessToken, refreshToken } = await this.userService.login(
+        login,
+        password
+      );
 
       res
         .status(RESPONSE_STATUS.OK)
-        .json({ message: "Login successful", token });
+        .json({ message: "Login successful", accessToken })
+        .cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          maxAge: 15 * 24 * 60 * 60 * 1000,
+        });
     } catch (error: any) {
       if (error.message === AUTH_ERROR.LOGIN) {
         res
@@ -41,17 +48,34 @@ export default class AuthController {
   }
 
   @httpPost("/register")
-  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const id = req.params.id;
       const user = req.body;
-      const updatedUser = await this.userService.update(id, user);
-      res.status(RESPONSE_STATUS.OK).json(updatedUser);
+      await this.userService.register(user);
+
+      res.status(RESPONSE_STATUS.OK).json('Register successful');
     } catch (error: any) {
       if (error.message === AUTH_ERROR.REGISTER) {
         res
           .status(RESPONSE_STATUS.INTERNAL_SERVER_ERROR)
           .json({ message: AUTH_ERROR.REGISTER });
+      } else {
+        next(error);
+      }
+    }
+  }
+
+  @httpPost("/verify")
+  async verify(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const token = req.params.token;
+      const user = await this.userService.verifyUser(token);
+      res.status(RESPONSE_STATUS.OK).json(user);
+    } catch (error: any) {
+      if (error.message === AUTH_ERROR.VERIFY) {
+        res
+          .status(RESPONSE_STATUS.INTERNAL_SERVER_ERROR)
+          .json({ message: AUTH_ERROR.VERIFY });
       } else {
         next(error);
       }

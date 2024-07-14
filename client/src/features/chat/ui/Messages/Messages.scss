@@ -1,0 +1,19 @@
+.messages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 0 10px 0;
+  overflow-y: auto;
+
+  gap: 12px;
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 24px 0 24px;
+    overflow-y: auto;
+
+    gap: 12px;
+  }
+}

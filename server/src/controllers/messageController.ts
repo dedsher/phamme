@@ -10,20 +10,21 @@ import {
 } from "inversify-express-utils";
 import { inject } from "inversify";
 import { TYPES } from "../types/inversify";
-import { IMessageService } from "../types/core";
+import { IChatService, IMessageService } from "../types/core";
+import { io } from "../app";
+import multer, { Multer } from "multer";
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const { MESSAGE: MESSAGE_ERROR } = ERROR_MESSAGE;
 
-@controller("/messages", TYPES.AuthenticateToken)
+@controller("/messages", TYPES.AuthenticateToken, upload.array("attachments"))
 export default class MessageController implements interfaces.Controller {
-  private io: Socket;
-
   constructor(
     @inject(TYPES.MessageService) private messageService: IMessageService,
-    @inject(TYPES.io) io: Socket
-  ) {
-    this.io = io;
-  }
+    @inject(TYPES.ChatService) private chatService: IChatService
+  ) {}
 
   @httpGet("/chat/:chatId")
   async getByChatId(
@@ -65,7 +66,16 @@ export default class MessageController implements interfaces.Controller {
         attachments
       );
 
-      this.io.to(chatId).emit("new message", createdMessage);
+      const chatObj = {
+        id: messageObj.chat_id,
+        last_message: messageObj.content ? messageObj.content : "Вложения",
+        last_message_at: messageObj.created_at,
+        last_message_author_id: messageObj.sender_id,
+      };
+
+      const updatedChat = await this.chatService.updateLastMessage(chatObj);
+
+      io.to(chatId).emit("new message", createdMessage);
 
       res.status(RESPONSE_STATUS.CREATED).json(createdMessage);
     } catch (error: any) {

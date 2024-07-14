@@ -19,13 +19,18 @@ export default class MessageRepository implements IMessageRepository {
           "message.reply_to",
           "reply_message.id"
         )
+        .leftJoin({ sender: "user" }, "message.sender_id", "sender.id")
         .select(
           "message.id",
           "message.sender_id",
           "message.created_at",
           "message.content",
           "message.status",
-          this.db.raw("COALESCE(reply_message.content, ?) as reply_to", [""])
+          this.db.raw("COALESCE(reply_message.content, ?) as reply_to", [""]),
+          this.db.raw(
+            "CONCAT(sender.firstname, ' ', sender.lastname) as sender_name"
+          ),
+          "sender.avatar_url as sender_avatar_url"
         )
         .where("message.chat_id", chatId)
         .orderBy("message.created_at", "asc");
@@ -44,7 +49,7 @@ export default class MessageRepository implements IMessageRepository {
 
       return message;
     } catch (error: any) {
-      console.log(error);
+      console.log("error", error);
       throw new Error(MESSAGE_ERROR.CREATE);
     }
   }

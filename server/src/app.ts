@@ -8,14 +8,7 @@ import createSocket from "./socket";
 import container from "./inversify.config";
 import { TYPES } from "./types/inversify";
 import { InversifyExpressServer } from "inversify-express-utils";
-
-// const app = express();
-// app.use(
-//   cors({
-//     origin: ALLOWED_ORIGIN,
-//   })
-// );
-// const server = http.createServer(app);
+const cookieParser = require("cookie-parser");
 
 const inversifyServer = new InversifyExpressServer(container, null, {
   rootPath: "/api",
@@ -24,6 +17,7 @@ const inversifyServer = new InversifyExpressServer(container, null, {
 inversifyServer.setConfig((app) => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(cookieParser());
   app.use(
     cors({
       origin: container.get<string>(TYPES.ALLOWED_ORIGIN),
@@ -43,9 +37,8 @@ inversifyServer.setErrorConfig((app) => {
   });
 });
 
-const app = inversifyServer.build();
-const server = http.createServer(app);
-const io = createSocket(server);
-container.bind(TYPES.io).toConstantValue(io);
+const builtApp = inversifyServer.build();
+const server = http.createServer(builtApp);
+export const io = createSocket(server, container);
 
 export default server;

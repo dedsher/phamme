@@ -21,12 +21,16 @@
       "@store/*": ["store/*"],
       "@pages/*": ["pages/*"],
       "@api/*": ["api/*"],
-      "@styles/*": ["styles/*"],
+      "@styles/*": ["app/styles/*"],
       "@mocks/*": ["mocks/*"],
       "@interfaces/*": ["interfaces/*"],
       "@utils/*": ["utils/*"],
       "@hooks/*": ["hooks/*"],
       "@sockets/*": ["sockets/*"],
+      "@shared/*": ["shared/*"],
+      "@features/*": ["features/*"],
+      "@app/*": ["app/*"],
+      "@entities/*": ["entities/*"],
     },
 
     /* Linting */

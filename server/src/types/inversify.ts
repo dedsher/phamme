@@ -3,6 +3,8 @@ const TYPES = {
   ALLOWED_ORIGIN: Symbol.for("ALLOWED_ORIGIN"),
   Repository: Symbol.for("Repository"),
   AttachmentRepository: Symbol.for("AttachmentRepository"),
+  AttachmentService: Symbol.for("AttachmentService"),
+  AttachmentController: Symbol.for("AttachmentController"),
   ChatRepository: Symbol.for("ChatRepository"),
   ChatService: Symbol.for("ChatService"),
   ChatController: Symbol.for("ChatController"),
@@ -12,11 +14,10 @@ const TYPES = {
   UserRepository: Symbol.for("UserRepository"),
   UserService: Symbol.for("UserService"),
   UserController: Symbol.for("UserController"),
+  AuthController: Symbol.for("AuthController"),
   AuthenticateToken: Symbol.for("AuthenticateToken"),
   ErrorHandler: Symbol.for("ErrorHandler"),
-  CreateSocket: Symbol.for("CreateSocket"),
-  SocketIO: Symbol.for("SocketIO"),
-  io: Symbol.for("io"),
+  io: Symbol.for("io"), 
 };
 
 export { TYPES };

@@ -32,8 +32,8 @@ export default class ChatService implements IChatService {
     return await this.chatRepository.create(chat);
   }
 
-  async update(id: string, chat: Chat) {
-    return await this.chatRepository.update(id, chat);
+  async updateLastMessage(chat: any) {
+    return await this.chatRepository.updateLastMessage(chat);
   }
 
   async delete(id: string) {

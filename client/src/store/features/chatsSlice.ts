@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ChatsState } from "@interfaces/store";
-import { ChatPreview } from "@interfaces/entities";
+import { IChatPreview } from "@interfaces/entities";
 import { getUserChats } from "@api/api";
 
 const initialState: ChatsState = {
-  chats: [] as ChatPreview[],
+  chats: [] as IChatPreview[],
   status: "idle",
   error: null as string | null,
 };

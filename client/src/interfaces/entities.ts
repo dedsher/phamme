@@ -13,11 +13,17 @@ export interface IUser {
   login?: string;
 }
 
-export type RegisterData = Pick<
-  IUser,
-  "email" | "firstname" | "lastname" | "password"
->;
-export type LoginData = Pick<IUser, "login" | "password">;
+export interface RegisterData {
+  email: string;
+  firstname: string;
+  lastname: string;
+  password: string;
+  passwordRepeat: string;
+};
+export interface LoginData {
+  login: string;
+  password: string;
+};
 
 export interface IChat {
   id: string;
@@ -46,6 +52,8 @@ export interface IMessage {
   status: string;
   reply_to?: number;
   attachments?: IAttachment[];
+  sender_name: string;
+  sender_avatar_url?: string;
 }
 
 export interface IFriend {
@@ -56,11 +64,11 @@ export interface IFriend {
 }
 
 export interface IAttachment {
+  id: number;
   message_id: number;
   type: string;
   url: string;
-  width?: number;
-  height?: number;
+  name: string;
 }
 
 export interface ITransaction {

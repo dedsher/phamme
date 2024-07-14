@@ -74,10 +74,11 @@ export default class ChatRepository implements IChatRepository {
     }
   }
 
-  async update(id: string, chat: Chat): Promise<Chat> {
+  async updateLastMessage(chat: Chat): Promise<Chat> {
+    console.log("chat", chat);
     try {
       const [updatedChat] = await this.db("chat")
-        .where({ id })
+        .where({ id: chat.id })
         .update(chat)
         .returning("*");
       return updatedChat;

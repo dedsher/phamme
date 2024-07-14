@@ -5,6 +5,7 @@ import { RESPONSE_STATUS } from "../constants/responseStatus";
 import { inject } from "inversify";
 import { TYPES } from "../types/inversify";
 import { controller, httpGet, interfaces } from "inversify-express-utils";
+import { io } from "app";
 
 const { CHAT: CHAT_ERROR } = ERROR_MESSAGE;
 
@@ -21,6 +22,7 @@ export default class ChatController implements interfaces.Controller {
     try {
       const userId = Number(req.params.userId);
       const userChats = await this.chatService.getByUserId(userId);
+  
       res.status(RESPONSE_STATUS.OK).json(userChats);
     } catch (error: any) {
       if (error.message === CHAT_ERROR.RETRIEVE_BY_USER_ID) {
@@ -50,8 +52,8 @@ export default class ChatController implements interfaces.Controller {
     try {
       const id = req.params.id;
       const chat = req.body;
-      const updatedChat = await this.chatService.update(id, chat);
-      res.status(RESPONSE_STATUS.OK).json(updatedChat);
+      // const updatedChat = await this.chatService.update(chat);
+      // res.status(RESPONSE_STATUS.OK).json(updatedChat);
     } catch (error) {
       // const appError = error as AppError;
       // res

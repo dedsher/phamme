@@ -1,0 +1,30 @@
+.attachments {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.photos {
+  display: grid;
+  overflow: hidden;
+
+  border-radius: 10px;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  &__item:nth-child(odd):first-child {
+    grid-column: span 2;
+  }
+
+  &__item .ant-image {
+    width: 100%;
+  }
+}
+
+.files {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}

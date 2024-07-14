@@ -18,7 +18,7 @@ export async function seed(knex: Knex): Promise<void> {
       updated_at: "2024-05-14T16:28:01.196041",
       avatar_url: "https://via.placeholder.com/50",
       status: "offline",
-      last_login: "2024-05-15T04:28:01.196041",
+      last_seen: "2024-05-15T04:28:01.196041",
     },
     {
       id: 2,
@@ -30,8 +30,8 @@ export async function seed(knex: Knex): Promise<void> {
       created_at: "2024-05-15T16:28:01.196041",
       updated_at: "2024-05-15T16:28:01.196041",
       avatar_url: "https://via.placeholder.com/50",
-      status: "online",
-      last_login: "2024-05-16T04:28:01.196041",
+      status: "offline",
+      last_seen: "2024-05-16T04:28:01.196041",
     },
     {
       id: 3,
@@ -44,7 +44,7 @@ export async function seed(knex: Knex): Promise<void> {
       updated_at: "2024-05-16T16:28:01.196041",
       avatar_url: "https://via.placeholder.com/50",
       status: "offline",
-      last_login: "2024-05-17T04:28:01.196041",
+      last_seen: "2024-05-17T04:28:01.196041",
     },
   ]);
 
@@ -230,6 +230,18 @@ export async function seed(knex: Knex): Promise<void> {
     },
     {
       chat_id: 3,
+      user_id: 3,
+    },
+  ]);
+
+  await knex("auth").insert([
+    {
+      user_id: 1,
+    },
+    {
+      user_id: 2,
+    },
+    {
       user_id: 3,
     },
   ]);

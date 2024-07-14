@@ -8,7 +8,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "@/styles/override.scss";`,
+        additionalData: `@import "@/app/styles/override.scss";`,
       },
     },
   },
@@ -20,12 +20,16 @@ export default defineConfig({
       "@store": path.resolve("./src/store"),
       "@pages": path.resolve("./src/pages"),
       "@api": path.resolve("./src/api"),
-      "@styles": path.resolve("./src/styles"),
+      "@styles": path.resolve("./src/app/styles"),
       "@mocks": path.resolve("./src/mocks"),
       "@interfaces": path.resolve("./src/interfaces"),
       "@utils": path.resolve("./src/utils"),
       "@hooks": path.resolve("./src/hooks"),
       "@sockets": path.resolve("./src/sockets"),
+      "@shared": path.resolve("./src/shared"),
+      "@features": path.resolve("./src/features"),
+      "@app": path.resolve("./src/app"),
+      "@entities": path.resolve("./src/entities"),
     },
   },
   server: {

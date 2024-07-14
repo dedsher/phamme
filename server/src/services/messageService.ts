@@ -1,7 +1,12 @@
 import { inject, injectable } from "inversify";
 import { uploadFile } from "../ycs";
 import { TYPES } from "../types/inversify";
-import { IAttachmentRepository, IMessageRepository, IMessageService } from "../types/core";
+import {
+  IAttachmentRepository,
+  IChatRepository,
+  IMessageRepository,
+  IMessageService,
+} from "../types/core";
 
 @injectable()
 export default class MessageService implements IMessageService {
@@ -9,7 +14,8 @@ export default class MessageService implements IMessageService {
     @inject(TYPES.MessageRepository)
     private messageRepository: IMessageRepository,
     @inject(TYPES.AttachmentRepository)
-    private attachmentRepository: IAttachmentRepository
+    private attachmentRepository: IAttachmentRepository,
+    @inject(TYPES.ChatRepository) private chatRepository: IChatRepository
   ) {}
 
   async getByChatId(chatId: number) {
@@ -29,21 +35,20 @@ export default class MessageService implements IMessageService {
       throw Error("Message was not created");
     }
 
-    let createdAttachments: [] = [];
+    let createdAttachments: any[] | null = null;
 
     if (attachments && attachments.length > 0) {
       const attachmentRecords = await Promise.all(
         attachments.map(async (file) => {
-          const url = await uploadFile(file);
-          return { message_id: message.id, url };
+          const { type, url, fileName } = await uploadFile(file);
+          return { message_id: message.id, name: fileName, url, type };
         })
       );
 
-      const createdAttachments =
-        await this.attachmentRepository.saveAttachments(
-          message.id,
-          attachmentRecords
-        );
+      createdAttachments = await this.attachmentRepository.saveAttachments(
+        message.id,
+        attachmentRecords
+      );
     }
 
     return { message: message, attachments: createdAttachments };

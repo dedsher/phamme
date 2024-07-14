@@ -7,8 +7,8 @@ import { IAttachmentRepository } from "../types/core";
 export default class AttachmentRepository implements IAttachmentRepository {
   constructor(@inject(TYPES.Db) private db: Knex) {}
 
-  async saveAttachments(messageId: number, attachmentRecords?: any[]) {
-    if (!(attachmentRecords && attachmentRecords.length)) return;
+  async saveAttachments(messageId: number, attachmentRecords?: any[]): Promise<any[] | null> {
+    if (!(attachmentRecords && attachmentRecords.length)) return null;
 
     try {
       const [attachments] = await this.db("message_attachments")
@@ -19,11 +19,11 @@ export default class AttachmentRepository implements IAttachmentRepository {
       throw new Error("Failed to save attachments");
     }
   }
-
-  async getAttachmentsByChatId(chatId: number) {
+  
+  async getByChatId(chatId: number) {
     try {
       const attachments = await this.db("message_attachments")
-        .select("*")
+        .select("message_attachments.*")
         .join("message", "message.id", "message_attachments.message_id")
         .where("message.chat_id", chatId);
 

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { verifyJWT } from "../../utils/auth";
+import { verifyAccessToken } from "../../utils/auth";
 
 export const authenticateToken = (
   req: Request,
@@ -10,7 +10,7 @@ export const authenticateToken = (
   const token = authHeader && authHeader.split(" ")[1];
 
   if (token == null) return res.sendStatus(401);
-  if (!verifyJWT(token)) {
+  if (!verifyAccessToken(token)) {
     return res.status(403).send("Invalid token");
   }
 

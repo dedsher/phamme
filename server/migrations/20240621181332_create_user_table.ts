@@ -12,7 +12,7 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamp("updated_at").defaultTo(knex.fn.now());
     table.string("avatar_url");
     table.enu("status", ["online", "offline"]).defaultTo("offline");
-    table.timestamp("last_login");
+    table.timestamp("last_seen").defaultTo(knex.fn.now());
     table.string("solana_wallet_address", 255);
   });
 }

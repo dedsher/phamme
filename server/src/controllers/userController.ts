@@ -12,11 +12,12 @@ import {
 import { inject } from "inversify";
 import { TYPES } from "../types/inversify";
 import { IUserController } from "../types/core";
+import { io } from "../app";
 
 const { USER: USER_ERROR } = ERROR_MESSAGE;
 
 @controller("/users", TYPES.AuthenticateToken)
-export default class UserController implements interfaces.Controller  {
+export default class UserController implements interfaces.Controller {
   constructor(@inject(TYPES.UserService) private userService: any) {}
 
   @httpGet("/")
@@ -94,6 +95,29 @@ export default class UserController implements interfaces.Controller  {
       }
     }
   }
+
+  // @httpPut("/:id/online/:status")
+  // async setStatus(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> {
+  //   try {
+  //     const { id, status } = req.params;
+  //     const user = await this.userService.setStatus(id, status);
+      
+  //     io.emit('userStatusUpdate', { userId, isOnline: false });
+  //     res.status(RESPONSE_STATUS.OK).json(user);
+  //   } catch (error: any) {
+  //     if (error.message === USER_ERROR.STATUS) {
+  //       res
+  //         .status(RESPONSE_STATUS.INTERNAL_SERVER_ERROR)
+  //         .json({ message: USER_ERROR.STATUS });
+  //     } else {
+  //       next(error);
+  //     }
+  //   }
+  // }
 
   @httpDelete("/:id")
   async delete(req: Request, res: Response, next: NextFunction): Promise<void> {

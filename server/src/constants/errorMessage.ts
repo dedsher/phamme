@@ -2,6 +2,7 @@ export const ERROR_MESSAGE = {
   AUTH: {
     LOGIN: "Could not login",
     REGISTER: "Could not register",
+    VERIFY: "Could not verify",
   },
   USER: {
     RETRIEVE: "Could not retrieve users",
@@ -13,6 +14,8 @@ export const ERROR_MESSAGE = {
     DELETE: "Could not delete user",
     RETRIEVE_CHATS: "Could not retrieve user chats",
     RETRIEVE_MESSAGES: "Could not retrieve chat messages",
+    STATUS: "Could not set user status",
+    VERIFY: "Could not verify user",
   },
   CHAT: {
     RETRIEVE: "Could not retrieve chats",
@@ -28,5 +31,8 @@ export const ERROR_MESSAGE = {
     RETRIEVE: "Could not retrieve messages",
     CREATE: "Could not create message",
     UPLOAD_FILE: "Could not upload file",
+  },
+  ATTACHMENT: {
+    RETRIEVE: "Could not retrieve attachments",
   },
 };

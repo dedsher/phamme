@@ -9,13 +9,15 @@ const db = knex(connectionConfig);
 async function fixSequence() {
   try {
     await db.raw(`
-        SELECT setval('message_id_seq', (SELECT MAX(id) FROM message));
+        SELECT setval('user_id_seq', (SELECT MAX(id) FROM "user"));
       `);
     console.log("Sequence fixed successfully.");
   } catch (err) {
     console.error("Error fixing sequence:", err);
   }
 }
+
+// SELECT setval('message_id_seq', (SELECT MAX(id) FROM message));
 
 fixSequence();
 
