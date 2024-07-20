@@ -1,17 +1,16 @@
 import { NextFunction, Request, Response } from "express";
-import ChatService from "../services/chatService";
 import { ERROR_MESSAGE } from "../constants/errorMessage";
 import { RESPONSE_STATUS } from "../constants/responseStatus";
 import { inject } from "inversify";
 import { TYPES } from "../types/inversify";
 import { controller, httpGet, interfaces } from "inversify-express-utils";
-import { io } from "app";
+import { IChatService } from "../types/core";
 
 const { CHAT: CHAT_ERROR } = ERROR_MESSAGE;
 
 @controller("/chats", TYPES.AuthenticateToken)
 export default class ChatController implements interfaces.Controller {
-  constructor(@inject(TYPES.ChatService) private chatService: ChatService) {}
+  constructor(@inject(TYPES.ChatService) private chatService: IChatService) {}
 
   @httpGet("/user/:userId")
   async getByUserId(

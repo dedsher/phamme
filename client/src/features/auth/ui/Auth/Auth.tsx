@@ -1,7 +1,8 @@
+import "./Auth.scss";
 import { useLocation } from "react-router-dom";
 import LoginForm from "@features/auth/ui/LoginForm/LoginForm";
 import RegisterForm from "@features/auth/ui/RegisterForm/RegisterForm";
-import "./Auth.scss";
+import Verification from "@features/auth/ui/Verification/Verification";
 
 const Auth = () => {
   const location = useLocation();
@@ -9,6 +10,7 @@ const Auth = () => {
     <div className="auth">
       {location.pathname.includes("signin") && <LoginForm />}
       {location.pathname.includes("signup") && <RegisterForm />}
+      {location.pathname.includes("verification") && <Verification />}
     </div>
   );
 };

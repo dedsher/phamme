@@ -4,4 +4,5 @@ export interface Chat {
   sender_id: string;
   receiver: string;
   timestamp: number;
+  last_message: string;
 }

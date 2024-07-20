@@ -1,5 +1,5 @@
 export interface IUser {
-  id: string;
+  id: number;
   email: string;
   username: string;
   firstname: string;
@@ -11,6 +11,7 @@ export interface IUser {
   updated_at: string;
   last_login: string;
   login?: string;
+  wallet?: string;
 }
 
 export interface RegisterData {
@@ -42,6 +43,7 @@ export interface IChatPreview {
   lastname: string;
   avatar_url: string;
   friend_id: number;
+  status: "online" | "offline";
 }
 
 export interface IMessage {

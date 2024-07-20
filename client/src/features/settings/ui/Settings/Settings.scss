@@ -1,0 +1,17 @@
+.settings {
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+  &__button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+}
+

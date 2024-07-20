@@ -119,4 +119,10 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+
+  &__status-icon {
+    position: absolute;
+    right: 22px;
+    bottom: -4px;
+  }
 }

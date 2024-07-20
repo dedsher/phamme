@@ -10,14 +10,13 @@ async function fixSequence() {
   try {
     await db.raw(`
         SELECT setval('user_id_seq', (SELECT MAX(id) FROM "user"));
+        SELECT setval('message_id_seq', (SELECT MAX(id) FROM message));
       `);
     console.log("Sequence fixed successfully.");
   } catch (err) {
     console.error("Error fixing sequence:", err);
   }
 }
-
-// SELECT setval('message_id_seq', (SELECT MAX(id) FROM message));
 
 fixSequence();
 

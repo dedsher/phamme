@@ -1,4 +1,4 @@
-import { useState, ReactNode } from "react";
+import { ReactNode } from "react";
 import { Button as AntButton } from "antd";
 
 const Button = ({
@@ -12,8 +12,6 @@ const Button = ({
   handleClick: () => void;
   disabled: boolean;
 }) => {
-  const [loadings, setLoadings] = useState([]);
-
   return (
     <AntButton
       type="primary"

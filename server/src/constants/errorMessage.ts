@@ -3,6 +3,7 @@ export const ERROR_MESSAGE = {
     LOGIN: "Could not login",
     REGISTER: "Could not register",
     VERIFY: "Could not verify",
+    REFRESH: "Could not refresh token",
   },
   USER: {
     RETRIEVE: "Could not retrieve users",
@@ -16,6 +17,9 @@ export const ERROR_MESSAGE = {
     RETRIEVE_MESSAGES: "Could not retrieve chat messages",
     STATUS: "Could not set user status",
     VERIFY: "Could not verify user",
+    RETRIEVE_BY_REFRESH_TOKEN: "Could not retrieve user by refresh token",
+    RETRIEVE_CONTACTS: "Could not retrieve user contacts",
+    LOGOUT: "Could not logout user",
   },
   CHAT: {
     RETRIEVE: "Could not retrieve chats",
@@ -26,13 +30,21 @@ export const ERROR_MESSAGE = {
     CREATE: "Could not create chat",
     UPDATE: "Could not update chat",
     DELETE: "Could not delete chat",
+    UPDATE_UNREAD_COUNT: "Could not update unread count",
   },
   MESSAGE: {
     RETRIEVE: "Could not retrieve messages",
     CREATE: "Could not create message",
     UPLOAD_FILE: "Could not upload file",
+    UPDATE: "Could not update message",
   },
   ATTACHMENT: {
     RETRIEVE: "Could not retrieve attachments",
   },
+  TRANSACTION: {
+    RETRIEVE: "Could not retrieve transactions",
+    ADD_WALLET: "Could not add wallet",
+    DELETE_WAALLET: "Could not delete wallet",
+    CREATE: "Could not create transaction",
+  }
 };

@@ -1,9 +1,9 @@
+import { message } from "antd";
+import { FormikHelpers } from "formik";
 import { RegisterData } from "@interfaces/entities";
 import { useAuthForm } from "./useAuthForm";
 import { registerValidationSchema } from "@utils/validationSchemas";
-import { FormikHelpers } from "formik";
-import { useRegisterMutation } from "@entities/user/model/userApi";
-import { message } from "antd";
+import { useRegisterMutation } from "@features/auth/model/authApi";
 
 const errorResponses: { [key: string]: string } = {
   "User already exists": "Пользователь с таким email уже существует",

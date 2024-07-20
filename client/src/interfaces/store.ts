@@ -1,6 +1,5 @@
 import {
   IChatPreview,
-  IFriend,
   IMessage,
   ITransaction,
   IUser,
@@ -26,7 +25,6 @@ export interface MessagesState {
 
 export interface FriendState {
   currentFriendId: number | null;
-  friend: IFriend;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }

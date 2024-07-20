@@ -1,16 +1,15 @@
-import { useState, useRef } from "react";
+import "./MessageForm.scss";
+import { useState, useRef, useEffect } from "react";
 import { Input, Button, Dropdown, Upload } from "antd";
 import type { MenuProps, UploadFile } from "antd";
 import {
   UploadOutlined,
   SendOutlined,
   PaperClipOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
 import { Formik, Form, Field } from "formik";
-import * as Yup from "yup";
-import "./MessageForm.scss";
 import classNames from "classnames";
-import { handleMenuClick } from "./utils";
 import { CommentOutlined, CloseOutlined } from "@ant-design/icons";
 
 interface SendMessageFormProps {
@@ -19,9 +18,24 @@ interface SendMessageFormProps {
     replyTo: number | null,
     attachments: File[] | null
   ) => void;
+  onSaveMessage: (
+    content: string,
+    messageId: number
+  ) => void;
   repliedMessage: any;
   onCancelReply: () => void;
+  edittingMessage: any;
+  onCancelEdit: () => void;
   inputRef: any;
+  onShowTransactionModal: () => void;
+}
+
+interface NewMessageFormValues {
+  content: string;
+}
+
+interface EditMessageFormValues {
+  editContent: string;
 }
 
 const items: MenuProps["items"] = [
@@ -33,13 +47,32 @@ const { TextArea } = Input;
 
 const MessageForm = ({
   onSendMessage,
+  onSaveMessage,
   repliedMessage,
   onCancelReply,
+  edittingMessage,
+  onCancelEdit,
   inputRef,
+  onShowTransactionModal,
 }: SendMessageFormProps) => {
   const [inputValue, setInputValue] = useState("");
+  const [editValue, setEditValue] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const uploadButtonRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (edittingMessage) {
+      setEditValue(edittingMessage.content);
+    }
+  }, [edittingMessage]);
+
+  const handleMenuClick = (uploadButtonRef: any, { key }: { key: string }) => {
+    if (key === "file" && uploadButtonRef.current) {
+      uploadButtonRef.current.click();
+    } else if (key === "payment") {
+      onShowTransactionModal();
+    }
+  };
 
   const handleSubmit = (values: { content: string }, { resetForm }: any) => {
     if (!values.content.trim() && fileList.length === 0) return;
@@ -56,6 +89,18 @@ const MessageForm = ({
     setFileList([]);
   };
 
+  const handleSave = (values: { editContent: string }) => {
+    if (!values.editContent.trim() && fileList.length === 0) return;
+    
+    onSaveMessage(
+      editValue,
+      edittingMessage.messageId,
+    );
+    onCancelEdit();
+    setInputValue("");
+    setFileList([]);
+  }
+
   const handleUploadChange = async ({
     fileList,
   }: {
@@ -64,8 +109,8 @@ const MessageForm = ({
     setFileList(fileList);
   };
 
-  return (
-    <Formik initialValues={{ content: "" }} onSubmit={handleSubmit}>
+  return !edittingMessage ? (
+    <Formik<NewMessageFormValues> initialValues={{ content: "" }} onSubmit={handleSubmit}>
       {({ handleSubmit }) => (
         <Form className="chat-input" onSubmit={handleSubmit}>
           {repliedMessage && (
@@ -124,12 +169,13 @@ const MessageForm = ({
                   className="chat-input__input"
                   placeholder="Введите сообщение..."
                   ref={inputRef}
+                  value={inputValue}
                 />
               )}
             </Field>
             {(inputValue || fileList.length > 0) && (
               <Button
-                className="chat-input__send"
+                className="chat-input__button chat-input__send"
                 htmlType="submit"
                 icon={<SendOutlined />}
               />
@@ -153,7 +199,49 @@ const MessageForm = ({
         </Form>
       )}
     </Formik>
-  );
+  ) : (
+    <Formik<EditMessageFormValues> initialValues={{ editContent: edittingMessage.content }} onSubmit={handleSave}>
+      {({ handleSubmit }) => (
+        <Form className="chat-input" onSubmit={handleSubmit}>
+          <div className="chat-input__content">
+            <Field name="editContent">
+              {({ field }: any) => (
+                <TextArea
+                  {...field}
+                  autoSize={{ minRows: 1, maxRows: 4 }}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    setEditValue(e.target.value);
+                  }}
+                  onPressEnter={(e) => {
+                    if (!e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit();
+                    }
+                  }}
+                  className="chat-input__input"
+                  placeholder="Введите сообщение..."
+                  ref={inputRef}
+                  value={editValue}
+                />
+              )}
+            </Field>
+            <Button
+              disabled={!editValue.trim() && fileList.length === 0}
+              className="chat-input__button chat-input__save"
+              htmlType="submit"
+              icon={<CheckOutlined />}
+            />
+            <Button
+              className="chat-input__button chat-input__cancel"
+              onClick={onCancelEdit}
+              icon={<CloseOutlined />}
+            />
+          </div>
+        </Form>
+      )}
+    </Formik>
+  )
 };
 
 export default MessageForm;

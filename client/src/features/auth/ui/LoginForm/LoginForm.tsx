@@ -1,11 +1,12 @@
+import "./LoginForm.scss";
 import React from "react";
-import Button from "@shared/ui/Button/Button";
-import FormItem from "../FormItem/FormItem";
 import { Link } from "react-router-dom";
 import { Formik, Form, FormikProps } from "formik";
+import Button from "@shared/ui/Button/Button";
+import FormItem from "@features/auth/ui/FormItem/FormItem";
 import { useLogin } from "@features/auth/hooks/useLogin";
 import { LoginData } from "@interfaces/entities";
-import "./LoginForm.scss";
+
 
 const LoginForm = () => {
   const { initialValues, validationSchema, handleSubmit, errorResponse } =
@@ -31,7 +32,7 @@ const LoginForm = () => {
           errors,
           touched,
           isSubmitting,
-          status,
+          setFieldTouched
         }: FormikProps<LoginData>) => (
           <Form className="login-form">
             <FormItem
@@ -45,10 +46,7 @@ const LoginForm = () => {
               name="password"
             />
             <div>
-              {status && status.success && (
-                <div className="login-form__success">Вы успешно вошли!</div>
-              )}
-              {status && !status.success && (
+              {!touched.password && errorResponse && (
                 <div className="login-form__error">{errorResponse}</div>
               )}
             </div>
@@ -57,7 +55,11 @@ const LoginForm = () => {
                 Забыл пароль
               </a>
             </div>
-            <Button handleClick={onSubmitButtonClick} disabled={isSubmitting}>
+            <Button handleClick={() => {
+              onSubmitButtonClick();
+              setFieldTouched("login", false);
+              setFieldTouched("password", false);
+            }} disabled={isSubmitting}>
               Войти
             </Button>
             <div className="login-form__addon">

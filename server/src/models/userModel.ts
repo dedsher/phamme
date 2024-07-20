@@ -12,4 +12,4 @@ export interface User {
   last_login: string;
 }
 
-export type UserData = Pick<User, "email" | "firstname" | "lastname" | "password">;
+export type UserData = Pick<User, "email" | "firstname" | "lastname" | "password" | "avatar_url">;

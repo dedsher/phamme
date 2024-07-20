@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { RESPONSE_STATUS } from "../constants/responseStatus";
 import { ERROR_MESSAGE } from "../constants/errorMessage";
-import { Socket } from "socket.io";
 import {
   controller,
   httpGet,
   httpPost,
+  httpPut,
   interfaces,
 } from "inversify-express-utils";
 import { inject } from "inversify";
@@ -73,9 +73,9 @@ export default class MessageController implements interfaces.Controller {
         last_message_author_id: messageObj.sender_id,
       };
 
-      const updatedChat = await this.chatService.updateLastMessage(chatObj);
+      await this.chatService.updateLastMessage(chatObj);
 
-      io.to(chatId).emit("new message", createdMessage);
+      io.to([`room-${chatId}`, String(chatId)]).emit("new message", createdMessage);
 
       res.status(RESPONSE_STATUS.CREATED).json(createdMessage);
     } catch (error: any) {
@@ -83,6 +83,35 @@ export default class MessageController implements interfaces.Controller {
         res
           .status(RESPONSE_STATUS.INTERNAL_SERVER_ERROR)
           .json({ message: MESSAGE_ERROR.CREATE });
+      } else {
+        next(error);
+      }
+    }
+  }
+
+  @httpPut("/:messageId")
+  async updateMessage(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const messageId = req.params.messageId;
+      const { content, chatId } = req.body;
+
+      const updatedMessage = await this.messageService.updateMessage(
+        Number(messageId),
+        content
+      );
+
+      io.to([`room-${chatId}`, String(chatId)]).emit("new message", {...updatedMessage, updated: true });
+
+      res.status(RESPONSE_STATUS.OK).json(updatedMessage);
+    } catch (error: any) {
+      if (error.message === MESSAGE_ERROR.UPDATE) {
+        res
+          .status(RESPONSE_STATUS.INTERNAL_SERVER_ERROR)
+          .json({ message: MESSAGE_ERROR.UPDATE });
       } else {
         next(error);
       }

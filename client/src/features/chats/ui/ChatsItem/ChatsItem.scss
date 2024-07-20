@@ -8,14 +8,28 @@
   gap: 13px;
 
   &__avatar {
+    position: relative;
+
     display: flex;
     justify-content: center;
     align-items: center;
     width: 54px;
     height: 54px;
-    overflow: hidden;
 
     border-radius: 50%;
+
+    &--online::after {
+      content: "";
+      position: absolute;
+      right: 4px;
+      bottom: 0;
+
+      width: 10px;
+      height: 10px;
+
+      background-color: $color-aquamarine;
+      border-radius: 50%;
+    }
 
     img {
       width: 100%;
@@ -23,6 +37,18 @@
 
       object-fit: cover;
     }
+  }
+
+  &__avatar-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 54px;
+    height: 54px;
+    overflow: hidden;
+
+    background-color: $color-gallery;
+    border-radius: 50%;
   }
 
   &__wrapper {

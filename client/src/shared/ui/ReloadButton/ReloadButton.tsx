@@ -1,5 +1,5 @@
-import { handleReloadClick } from "@utils/helpers";
 import "./ReloadButton.scss";
+import { handleReloadClick } from "@utils/helpers";
 
 const ReloadButton = () => {
   return (

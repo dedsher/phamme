@@ -4,7 +4,6 @@ import { ERROR_MESSAGE } from "../constants/errorMessage";
 import {
   controller,
   httpGet,
-  httpPost,
   interfaces,
 } from "inversify-express-utils";
 import { inject } from "inversify";

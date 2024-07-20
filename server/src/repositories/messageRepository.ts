@@ -13,9 +13,16 @@ export default class MessageRepository implements IMessageRepository {
 
   async getByChatId(chatId: number): Promise<Message[]> {
     try {
-      const messages = await this.db("message")
+      const messages = await this.db
+        .with("reply_cte", (qb) => {
+          qb.select("id", "content")
+            .from("message")
+            .where("content", "<>", "")
+            .orWhereNull("content");
+        })
+        .from("message")
         .leftJoin(
-          { reply_message: "message" },
+          { reply_message: "reply_cte" },
           "message.reply_to",
           "reply_message.id"
         )
@@ -26,7 +33,12 @@ export default class MessageRepository implements IMessageRepository {
           "message.created_at",
           "message.content",
           "message.status",
-          this.db.raw("COALESCE(reply_message.content, ?) as reply_to", [""]),
+          this.db.raw(
+            `CASE 
+        WHEN reply_message.content = '' THEN 'вложения' 
+        ELSE reply_message.content 
+      END as reply_to`
+          ),
           this.db.raw(
             "CONCAT(sender.firstname, ' ', sender.lastname) as sender_name"
           ),
@@ -49,8 +61,37 @@ export default class MessageRepository implements IMessageRepository {
 
       return message;
     } catch (error: any) {
-      console.log("error", error);
       throw new Error(MESSAGE_ERROR.CREATE);
+    }
+  }
+
+  async updateMessage(messageId: number, content: string): Promise<Message> {
+    try {
+      const [message] = await this.db("message")
+        .where("id", messageId)
+        .update({ content })
+        .returning("*");
+
+      return message;
+    } catch (error: any) {
+      throw new Error(MESSAGE_ERROR.UPDATE);
+    }
+  }
+
+  async isMessageLast(messageId: number): Promise<boolean> {
+    try {
+      const [message] = await this.db("message")
+        .where("id", messageId)
+        .select("chat_id");
+
+      const [lastMessage] = await this.db("message")
+        .where("chat_id", message.chat_id)
+        .orderBy("created_at", "desc")
+        .select("id");
+
+      return lastMessage.id === messageId;
+    } catch (error: any) {
+      throw new Error(MESSAGE_ERROR.RETRIEVE);
     }
   }
 
@@ -67,6 +108,31 @@ export default class MessageRepository implements IMessageRepository {
       await this.db("attachments").insert(attachmentRecords);
     } catch (error: any) {
       throw new Error("Failed to save attachments");
+    }
+  }
+
+  async markMessageAsRead(messageId: number): Promise<Message> {
+    try {
+      const [message] = await this.db("message")
+        .where("id", messageId)
+        .update({ status: "read" })
+        .returning("*");
+
+      return message;
+    } catch (error: any) {
+      throw new Error(MESSAGE_ERROR.UPDATE);
+    }
+  }
+
+  async getChatIdByMessageId(messageId: number): Promise<number> {
+    try {
+      const [chatId] = await this.db("message")
+        .where("id", messageId)
+        .select("chat_id");
+
+      return chatId.chat_id;
+    } catch (error: any) {
+      throw new Error(MESSAGE_ERROR.RETRIEVE);
     }
   }
 }

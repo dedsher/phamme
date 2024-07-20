@@ -4,11 +4,12 @@ import {
   generateJWT,
   generateVerificationToken,
   getIdByVerificationToken,
-  sendMail,
-} from "../../utils/auth";
+} from "../utils/auth";
+import { sendMail } from "../utils/mailer";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types/inversify";
 import { IUserRepository, IUserService } from "../types/core";
+import { jwtDecode } from "jwt-decode";
 
 @injectable()
 export default class UserService implements IUserService {
@@ -24,6 +25,26 @@ export default class UserService implements IUserService {
     }
 
     return users;
+  }
+
+  async getUsersForSearch(userId: number) {
+    const users = await this.userRepository.getUsersForSearch(userId);
+
+    if (!users) {
+      throw new Error("No users found");
+    }
+
+    return users;
+  }
+
+  async getUserProfileById(id: number) {
+    const user = await this.userRepository.getUserProfileById(id);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user;
   }
 
   async getById(id: string) {
@@ -46,6 +67,30 @@ export default class UserService implements IUserService {
     return user;
   }
 
+  async setStatus(id: number, status: string) {
+    const user = await this.userRepository.setStatus(id, status);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user;
+  }
+
+  async getContacts(id: number) {
+    const contacts = await this.userRepository.getContacts(id);
+
+    if (!contacts) {
+      throw new Error("User not found");
+    }
+
+    if (contacts.length === 0) return [] as number[];
+
+    const parsedContacts = contacts.map((contact) => parseInt(contact.id as string, 10));
+
+    return parsedContacts;
+  }
+
   async register(user: User): Promise<User | null> {
     const existingUser = await this.userRepository.getByEmail(user.email);
 
@@ -66,16 +111,6 @@ export default class UserService implements IUserService {
     return createdUser;
   }
 
-  async setStatus(id: number, status: string) {
-    const user = await this.userRepository.setStatus(id, status);
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    return user;
-  }
-
   async login(login: string, password: string) {
     let user: User | null = null;
 
@@ -89,11 +124,11 @@ export default class UserService implements IUserService {
       throw new Error("User not found");
     }
 
-    const isVerified = this.userRepository.isVerified(Number(user.id));
+    // const isVerified = this.userRepository.isVerified(Number(user.id));
 
-    if (!isVerified) {
-      throw new Error("User not verified");
-    }
+    // if (!isVerified) {
+    //   throw new Error("User not verified");
+    // }
 
     const isPasswordValid = await comparePasswords(password, user.password);
 
@@ -103,8 +138,8 @@ export default class UserService implements IUserService {
 
     const { accessToken, refreshToken } = generateJWT(user);
 
-    const savedRefreshToken = this.userRepository.saveRefreshToken(
-      Number(user!),
+    const savedRefreshToken = await this.userRepository.saveRefreshToken(
+      Number(user.id),
       refreshToken
     );
 
@@ -115,10 +150,42 @@ export default class UserService implements IUserService {
     return { accessToken, refreshToken };
   }
 
+  async logout(refreshToken: string) {
+    const user = await this.userRepository.deleteRefreshToken(refreshToken);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user;
+  }
+
+  async refresh(refreshToken: string) {
+    const user: any = await this.userRepository.getByRefreshToken(refreshToken);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (refreshToken !== user.refresh_token) {
+      throw new Error("Invalid refresh token");
+    }
+
+    const decodedRefresh = jwtDecode(refreshToken);
+
+    if (decodedRefresh.exp! < Date.now() / 1000) {
+      throw new Error("Refresh token expired");
+    }
+
+    const { accessToken } = generateJWT(user);
+
+    return accessToken;
+  }
+
   async verifyUser(token: string) {
     const userId = getIdByVerificationToken(token);
 
-    const user = await this.userRepository.verifyUser(userId);
+    const user = await this.userRepository.verifyUser(Number(userId));
 
     if (!user) {
       throw new Error("User not found");

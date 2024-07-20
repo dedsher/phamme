@@ -1,18 +1,17 @@
-import { useEffect, useRef, useState } from "react";
 import "./Message.scss";
+import { useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import Attachments from "@features/chat/ui/Attachments/Attachments";
-import { parseTimeForMessage } from "@utils/helpers";
-import { IMessage } from "@interfaces/entities";
-import { useUserId } from "@entities/user/hooks/useUserId";
 import { Button, Dropdown, MenuProps, message as antMessage } from "antd";
 import {
   MessageOutlined,
   SignatureOutlined,
   EllipsisOutlined,
 } from "@ant-design/icons";
-
-const userId = useUserId();
+import Attachments from "@features/chat/ui/Attachments/Attachments";
+import { parseTimeForMessage } from "@utils/helpers";
+import { IMessage } from "@interfaces/entities";
+import { useUserId } from "@entities/user/hooks/useUserId";
+import { DeliveredIcon, ReadIcon } from "@shared/assets/icons";
 
 const items: MenuProps["items"] = [
   { key: "reply", icon: <MessageOutlined />, label: "Ответить" },
@@ -29,12 +28,14 @@ const getMenuItems = (isAuthor: boolean) => {
 const Message = ({
   message,
   onReply,
+  onEdit,
 }: {
   message: IMessage;
   onReply: (messageId: number, content: string, author: string) => void;
+  onEdit: (messageId: number, content: string) => void;
 }) => {
   const messageRef = useRef<HTMLDivElement>(null);
-  const replyRef = useRef<HTMLDivElement>(null);
+  const userId = useUserId();
   const [replyWidth, setReplyWidth] = useState<number | null>(null);
   const {
     id,
@@ -44,6 +45,7 @@ const Message = ({
     attachments,
     reply_to,
     sender_name,
+    status,
   } = message;
 
   useEffect(() => {
@@ -54,8 +56,8 @@ const Message = ({
 
   const handleMenuClick = ({ key }: { key: string }) => {
     if (key === "edit") {
-      antMessage.info("Payment feature is not implemented yet.");
-      return;
+      // antMessage.info("Payment feature is not implemented yet.");
+      onEdit(id, content);
     } else if (key === "reply") {
       onReply(id, content, sender_name);
     }
@@ -106,6 +108,11 @@ const Message = ({
           <Button className="chat-input__more" icon={<EllipsisOutlined />} />
         </Dropdown>
       </div>
+      {userId === sender_id && (
+        <div className="message__status-icon">
+          {status === "read" ? <ReadIcon /> : <DeliveredIcon />}
+        </div>
+      )}
     </div>
   );
 };

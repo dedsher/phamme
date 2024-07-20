@@ -1,4 +1,4 @@
-import { controller, httpPost } from "inversify-express-utils";
+import { controller, httpGet, httpPost } from "inversify-express-utils";
 import { IUserService } from "../types/core";
 import { inject } from "inversify";
 import { TYPES } from "../types/inversify";
@@ -22,12 +22,12 @@ export default class AuthController {
       );
 
       res
-        .status(RESPONSE_STATUS.OK)
-        .json({ message: "Login successful", accessToken })
         .cookie("refreshToken", refreshToken, {
           httpOnly: true,
           maxAge: 15 * 24 * 60 * 60 * 1000,
-        });
+        })
+        .status(RESPONSE_STATUS.OK)
+        .json({ message: "Login successful", accessToken });
     } catch (error: any) {
       if (error.message === AUTH_ERROR.LOGIN) {
         res
@@ -47,13 +47,39 @@ export default class AuthController {
     }
   }
 
+  @httpGet("/refresh")
+  async refresh(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      const token = await this.userService.refresh(refreshToken);
+
+      res.status(RESPONSE_STATUS.OK).json({ token });
+    } catch (error: any) {
+      if (error.message === AUTH_ERROR.REFRESH) {
+        res
+          .status(RESPONSE_STATUS.UNAUTHORIZED)
+          .json({ message: AUTH_ERROR.REFRESH });
+      } else {
+        next(error);
+      }
+    }
+  }
+
   @httpPost("/register")
-  async register(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async register(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const user = req.body;
       await this.userService.register(user);
 
-      res.status(RESPONSE_STATUS.OK).json('Register successful');
+      res.status(RESPONSE_STATUS.OK).json("Register successful");
     } catch (error: any) {
       if (error.message === AUTH_ERROR.REGISTER) {
         res
@@ -65,7 +91,7 @@ export default class AuthController {
     }
   }
 
-  @httpPost("/verify")
+  @httpPost("/verification/:token")
   async verify(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const token = req.params.token;

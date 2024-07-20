@@ -1,4 +1,3 @@
-import { IAttachment } from "@interfaces/entities";
 import "./File.scss";
 import {
   FileOutlined,
@@ -7,6 +6,7 @@ import {
   FileExcelOutlined,
   FilePptOutlined,
 } from "@ant-design/icons";
+import { IAttachment } from "@interfaces/entities";
 
 const FileIcon = (ext: string) => {
   let FileIcon;

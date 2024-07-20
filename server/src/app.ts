@@ -8,7 +8,7 @@ import createSocket from "./socket";
 import container from "./inversify.config";
 import { TYPES } from "./types/inversify";
 import { InversifyExpressServer } from "inversify-express-utils";
-const cookieParser = require("cookie-parser");
+import cookieParser from "cookie-parser";
 
 const inversifyServer = new InversifyExpressServer(container, null, {
   rootPath: "/api",
@@ -21,17 +21,19 @@ inversifyServer.setConfig((app) => {
   app.use(
     cors({
       origin: container.get<string>(TYPES.ALLOWED_ORIGIN),
+      credentials: true,
     })
   );
 });
 
 inversifyServer.setErrorConfig((app) => {
-  // const errorHandler = container.get<Function>(TYPES.ErrorHandler);
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(err.stack);
+    if (err.message.includes("jwt")) {
+      res.status(401).json({ message: "unauthorized" });
+    }
 
     const status = err.status || 500;
-    const message = err.message || "Internal Server Error";
+    const message = err.message || "Something went wrong";
 
     res.status(status).json({ message });
   });

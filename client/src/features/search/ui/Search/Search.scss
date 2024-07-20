@@ -1,8 +1,24 @@
 .search {
+  position: relative;
+
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
+
+  &__found-users {
+    position: absolute;
+    top: 100%;
+    z-index: 5;
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    &--hidden {
+      display: none;
+    }
+  }
 
   &__wrapper {
     position: relative;

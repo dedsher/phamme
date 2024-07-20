@@ -53,4 +53,54 @@ export default class MessageService implements IMessageService {
 
     return { message: message, attachments: createdAttachments };
   }
+
+  async updateMessage(messageId: number, content: string) {
+    const message = await this.messageRepository.updateMessage(
+      messageId,
+      content
+    );
+
+    const isMessageLast = await this.messageRepository.isMessageLast(messageId);
+
+    if (isMessageLast) {
+      const chatId = await this.messageRepository.getChatIdByMessageId(
+        messageId
+      );
+
+      const chat = await this.chatRepository.getById(chatId);
+
+      if (!chat) {
+        throw Error("Chat was not found");
+      }
+
+      chat.last_message = content;
+      await this.chatRepository.updateLastMessage(chat);
+    }
+
+    if (!message) {
+      throw Error("Message was not updated");
+    }
+
+    return message;
+  }
+
+  async markMessageAsRead(messageId: number) {
+    const message = await this.messageRepository.markMessageAsRead(messageId);
+
+    if (!message) {
+      throw Error("Message was not marked as read");
+    }
+
+    return message;
+  }
+
+  async getChatIdByMessageId(messageId: number) {
+    const chatId = await this.messageRepository.getChatIdByMessageId(messageId);
+
+    if (!chatId) {
+      throw Error("Chat ID was not found");
+    }
+
+    return chatId;
+  }
 }

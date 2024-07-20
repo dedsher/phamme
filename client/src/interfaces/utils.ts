@@ -5,3 +5,5 @@ export interface IconButtonProps {
   handleClick: () => void;
   to?: string;
 }
+
+export type SvgComponent = React.FunctionComponent<React.SVGProps<SVGSVGElement>>;

@@ -1,17 +1,19 @@
+import "./RegisterForm.scss";
 import React from "react";
-import Button from "@shared/ui/Button/Button";
-import FormItem from "../FormItem/FormItem";
 import { Link } from "react-router-dom";
 import { Formik, Form, FormikProps } from "formik";
+import Button from "@shared/ui/Button/Button";
+import FormItem from "@features/auth/ui/FormItem/FormItem";
 import { useRegister } from "@features/auth/hooks/useRegister";
 import { RegisterData } from "@interfaces/entities";
-import "./RegisterForm.scss";
 
 const RegisterForm = () => {
   const { initialValues, validationSchema, handleSubmit, errorResponse } =
     useRegister();
 
   const formikRef = React.useRef<any>(null);
+
+  formikRef.current?.resetForm();
 
   const onSubmitButtonClick = () => {
     formikRef.current?.submitForm();

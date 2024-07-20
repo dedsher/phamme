@@ -28,9 +28,8 @@ export const useAuthForm = <T>({
     try {
       await onSubmit(values, formikHelpers);
       onSuccess && onSuccess();
-
     } catch (error: any) {
-      setErrorResponse(errorResponses[error.message] || "Ошибка");
+      setErrorResponse(errorResponses[error.data.message] || "Ошибка");
     } finally {
       formikHelpers.setSubmitting(false);
     }

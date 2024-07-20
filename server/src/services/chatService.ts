@@ -9,15 +9,7 @@ export default class ChatService implements IChatService {
   constructor(
     @inject(TYPES.ChatRepository) private chatRepository: ChatRepository
   ) {}
-
-  async getAll() {
-    return await this.chatRepository.getAll();
-  }
-
-  async getById(id: string) {
-    return await this.chatRepository.getById(id);
-  }
-
+  
   async getByUserId(userId: number) {
     const chats = await this.chatRepository.getByUserId(userId);
 

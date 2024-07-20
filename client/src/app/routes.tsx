@@ -3,11 +3,10 @@ import App from "./App";
 import Auth from "@features/auth/ui/Auth/Auth";
 import Home from "@features/homePage/ui/Home/Home";
 import ErrorPage from "@shared/ui/ErrorPage/ErrorPage";
-import Later from "@shared/ui/Later/Later";
 import ChatLayout from "@features/chat/ui/ChatLayout/ChatLayout";
 import ChatEmpty from "@features/chat/ui/ChatEmpty/ChatEmpty";
 import Chat from "@features/chat/ui/Chat/Chat";
-import Verification from "@features/auth/ui/Verification/Verification";
+import TransactionPage from "@features/transaction/ui/TransactionPage/TransactionPage";
 
 const router = createBrowserRouter([
   {
@@ -32,8 +31,8 @@ const router = createBrowserRouter([
             element: <Auth />,
           },
           {
-            path: "verification",
-            element: <Verification />,
+            path: "verification/:token",
+            element: <Auth />,
           },
         ],
       },
@@ -61,12 +60,8 @@ const router = createBrowserRouter([
             ],
           },
           {
-            path: "friends",
-            element: <Later />,
-          },
-          {
             path: "transactions",
-            element: <Later />,
+            element: <TransactionPage />,
           },
         ],
       },

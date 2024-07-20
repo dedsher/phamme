@@ -11,28 +11,10 @@ const { CHAT: CHAT_ERROR } = ERROR_MESSAGE;
 export default class ChatRepository implements IChatRepository {
   constructor(@inject(TYPES.Db) private db: Knex) {}
 
-  async getAll(): Promise<Chat[] | null> {
-    try {
-      const chats = await this.db("chat").select("*");
-      return chats.length === 0 ? null : chats;
-    } catch (error) {
-      throw new Error(CHAT_ERROR.RETRIEVE);
-    }
-  }
-
-  async getAllByIds(ids: number[]): Promise<Chat[] | null> {
-    try {
-      const chats = await this.db("chat").whereIn("id", ids);
-      return chats.length === 0 ? null : chats;
-    } catch (error) {
-      throw new Error(CHAT_ERROR.RETRIEVE_BY_IDS);
-    }
-  }
-
-  async getById(id: string): Promise<Chat | null> {
+  async getById(id: number): Promise<Chat> {
     try {
       const chat = await this.db("chat").where({ id }).first();
-      return chat || null;
+      return chat;
     } catch (error) {
       throw new Error(CHAT_ERROR.RETRIEVE_BY_ID);
     }
@@ -49,10 +31,17 @@ export default class ChatRepository implements IChatRepository {
           "u.firstname",
           "u.lastname",
           "u.avatar_url as avatar_url",
+          "u.status",
           "chat.last_message",
           "chat.last_message_at",
           "chat.last_message_author_id",
-          "chat.unread_count",
+          this.db.raw(`
+            (SELECT COUNT(*) 
+             FROM message 
+             WHERE message.chat_id = chat.id 
+               AND message.sender_id = other_cu.user_id 
+               AND message.status = 'delivered') 
+             AS unread_count`),
           "other_cu.user_id as friend_id"
         )
         .where("cu.user_id", userId)
@@ -75,7 +64,6 @@ export default class ChatRepository implements IChatRepository {
   }
 
   async updateLastMessage(chat: Chat): Promise<Chat> {
-    console.log("chat", chat);
     try {
       const [updatedChat] = await this.db("chat")
         .where({ id: chat.id })

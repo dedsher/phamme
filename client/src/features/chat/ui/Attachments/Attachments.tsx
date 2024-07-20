@@ -1,5 +1,5 @@
-import { Image } from "antd";
 import "./Attachments.scss";
+import { Image } from "antd";
 import { IAttachment } from "@interfaces/entities";
 import File from "@features/chat/ui/File/File";
 

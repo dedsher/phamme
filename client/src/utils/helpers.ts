@@ -1,36 +1,43 @@
 import { IAttachment, IMessage } from "@interfaces/entities";
+import { format, formatDistanceToNow, isToday, isThisWeek, subDays, subMinutes } from 'date-fns';
+import { ru } from "date-fns/locale";
 
 const days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
 export const parseTimeForChat = (time: string) => {
-  let timeToShow: string = "";
-
-  const now = new Date();
   const date = new Date(time);
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
 
-  if (now.toDateString() === date.toDateString()) {
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    timeToShow = `${hours}:${minutes}`;
-  } else if (now.getTime() - date.getTime() < 7 * 24 * 60 * 60 * 1000) {
-    timeToShow = `${days[date.getDay()]}`;
+  if (isToday(date)) {
+    return format(date, 'HH:mm');
+  } else if (isThisWeek(date)) {
+    return days[date.getDay()];
   } else {
-    const dayStr = day.toString().padStart(2, "0");
-    const monthStr = month.toString().padStart(2, "0");
-    timeToShow = `${dayStr}.${monthStr}.${year}`;
+    return format(date, 'dd.MM.yyyy');
   }
-
-  return timeToShow;
 };
 
-export const parseTimeForMessage = (datetimeString: string) => {
-  const date = new Date(datetimeString);
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  return `${hours}:${minutes}`;
+export const parseTimeForStatus = (time: string) => {
+  const date = new Date(time);
+
+  if (date > subMinutes(new Date(), 60)) {
+    const minutesAgo = formatDistanceToNow(date, { includeSeconds: false, locale: ru });
+    return `был в сети ${minutesAgo} назад`;
+  }
+  
+  if (date > subDays(new Date(), 1)) {
+    return `был в сети ${format(date, 'HH:mm')}`;
+  }
+
+  if (date > subDays(new Date(), 2)) {
+    return 'был в сети вчера';
+  }
+
+  return `был в сети ${format(date, 'dd.MM.yyyy')}`;
+};
+
+export const parseTimeForMessage = (time: string) => {
+  const date = new Date(time);
+  return format(date, 'HH:mm');
 };
 
 export const handleReloadClick = () => {

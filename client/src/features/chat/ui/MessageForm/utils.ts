@@ -1,13 +1,3 @@
-import { message as antMessage, UploadFile } from "antd";
-
-const handleMenuClick = (uploadButtonRef: any, { key }: { key: string }) => {
-  if (key === "file" && uploadButtonRef.current) {
-    uploadButtonRef.current.click();
-  } else if (key === "payment") {
-    antMessage.info("Payment feature is not implemented yet.");
-  }
-};
-
 // const handleAddFile = (
 //   fileList: UploadFile[],
 //   setFileList: (fileList: UploadFile[]) => void,
@@ -47,4 +37,4 @@ const handleMenuClick = (uploadButtonRef: any, { key }: { key: string }) => {
 //   }
 // };
 
-export { handleMenuClick, handleAddFile, handlePaste };
+// export { handleMenuClick, handleAddFile, handlePaste };

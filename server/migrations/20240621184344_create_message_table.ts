@@ -11,6 +11,10 @@ export async function up(knex: Knex): Promise<void> {
     table.integer("reply_to").defaultTo(null);
     table.foreign("chat_id").references("chat.id");
     table.foreign("sender_id").references("user.id");
+
+    table.index("chat_id", "idx_message_chat_id");
+    table.index("reply_to", "idx_message_reply_to");
+    table.index("sender_id", "idx_message_sender_id");
   });
 }
 

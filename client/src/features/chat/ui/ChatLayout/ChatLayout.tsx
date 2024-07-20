@@ -1,6 +1,6 @@
-import Chats from "@features/chats/ui/Chats/Chats";
 import "./ChatLayout.scss";
 import { Outlet } from "react-router-dom";
+import Chats from "@features/chats/ui/Chats/Chats";
 
 const ChatLayout = () => {
   return (

@@ -7,8 +7,6 @@ function App() {
   useEffect(() => {
     if (localStorage.getItem("token")) {
       navigate("/home", { replace: true });
-    } else {
-      navigate("/auth/signin", { replace: true });
     }
   }, [navigate]);
 

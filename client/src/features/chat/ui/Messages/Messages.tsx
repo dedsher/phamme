@@ -1,8 +1,7 @@
-import MessageGroup from "@features/chat/ui/MessageGroup/MessageGroup";
-import Message from "@features/chat/ui/Message/Message";
-import { IMessage } from "@interfaces/entities";
 import "./Messages.scss";
 import { useEffect, useRef } from "react";
+import MessageGroup from "@features/chat/ui/MessageGroup/MessageGroup";
+import { IMessage } from "@interfaces/entities";
 import { useUserId } from "@entities/user/hooks/useUserId";
 
 interface IMessageGroup {
@@ -10,11 +9,9 @@ interface IMessageGroup {
   isAuthor: boolean;
 }
 
-const messagesToGroups = (messages: IMessage[]) => {
-
+const messagesToGroups = (messages: IMessage[], userId: number) => {
   const groups: IMessageGroup[] = [];
   let currentGroup: IMessageGroup = { messages: [], isAuthor: false };
-  const userId = useUserId();
 
   for (let i = 0; i < messages.length; i++) {
     const currentMessage = messages[i];
@@ -43,11 +40,14 @@ const messagesToGroups = (messages: IMessage[]) => {
 const Messages = ({
   messages,
   onReply,
+  onEdit,
 }: {
   messages: IMessage[];
   onReply: (messageId: number, content: string, author: string) => void;
+  onEdit: (messageId: number, content: string) => void;
 }) => {
   const messagesRef = useRef<HTMLDivElement>(null);
+  const userId = useUserId();
 
   useEffect(() => {
     messagesRef.current?.scrollTo({
@@ -56,13 +56,19 @@ const Messages = ({
     });
   }, [messages]);
 
-  const messageGroups = messagesToGroups(messages);
+  const messageGroups = messagesToGroups(messages, userId);
 
   return (
     <div className="messages">
       <div className="messages__wrapper" ref={messagesRef}>
         {messageGroups.map((messageGroup) => (
-          <MessageGroup messages={messageGroup.messages} isAuthor={messageGroup.isAuthor} onReply={onReply} />
+          <MessageGroup
+            key={`group-${messageGroup.messages[0]?.id}`}
+            messages={messageGroup.messages}
+            isAuthor={messageGroup.isAuthor}
+            onReply={onReply}
+            onEdit={onEdit}
+          />
         ))}
       </div>
     </div>

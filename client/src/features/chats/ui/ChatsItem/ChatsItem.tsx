@@ -1,7 +1,7 @@
-import { IChatPreview } from "@interfaces/entities";
 import "./ChatsItem.scss";
 import classNames from "classnames";
 import { parseTimeForChat } from "@utils/helpers";
+import { IChatPreview } from "@interfaces/entities";
 import { useUserId } from "@entities/user/hooks/useUserId";
 
 interface ChatsItemProps {
@@ -19,6 +19,7 @@ const ChatsItem = ({ chat, isActive = false, handleClick }: ChatsItemProps) => {
     firstname,
     lastname,
     avatar_url,
+    status,
   } = chat;
   const userId = useUserId();
 
@@ -27,8 +28,15 @@ const ChatsItem = ({ chat, isActive = false, handleClick }: ChatsItemProps) => {
       className={classNames("chats-item", isActive ? "active" : "")}
       onClick={handleClick}
     >
-      <div className="chats-item__avatar">
-        <img src={avatar_url} alt="Аватар юзера" />
+      <div
+        className={classNames(
+          "chats-item__avatar",
+          status === "online" && "chats-item__avatar--online"
+        )}
+      >
+        <div className="chats-item__avatar-wrapper">
+          <img src={avatar_url} alt="Аватар юзера" />
+        </div>
       </div>
       <div className="chats-item__wrapper">
         <div className="chats-item__header">

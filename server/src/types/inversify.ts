@@ -14,10 +14,13 @@ const TYPES = {
   UserRepository: Symbol.for("UserRepository"),
   UserService: Symbol.for("UserService"),
   UserController: Symbol.for("UserController"),
+  TransactionRepository: Symbol.for("TransactionRepository"),
+  TransactionService: Symbol.for("Transaction"),
+  TransactionController: Symbol.for("TransactionController"),
   AuthController: Symbol.for("AuthController"),
   AuthenticateToken: Symbol.for("AuthenticateToken"),
   ErrorHandler: Symbol.for("ErrorHandler"),
-  io: Symbol.for("io"), 
+  io: Symbol.for("io"),
 };
 
 export { TYPES };
